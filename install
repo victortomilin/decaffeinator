@@ -1,0 +1,20 @@
+#!/bin/bash
+
+npm i -g decaffeinate
+npm i -g jscodeshift
+
+chmod +x bin/grind
+
+EXPORT_PATH_TO_OWN_BIN="export PATH=$PWD/bin:\$PATH"
+
+add_export_path_to () {
+  if test -f "$1"; then
+    echo "$EXPORT_PATH_TO_OWN_BIN" >> $1
+    source $1
+  fi
+}
+
+add_export_path_to ~/.bashrc
+add_export_path_to ~/.zshrc
+
+echo "I'm ready to grind a coffee"

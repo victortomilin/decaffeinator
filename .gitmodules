@@ -1,0 +1,3 @@
+[submodule "react-codemod"]
+	path = react-codemod
+	url = git://github.com/reactjs/react-codemod.git

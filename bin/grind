@@ -1,0 +1,22 @@
+#!/bin/bash
+
+ORIGINAL_FILE_NAME=$(basename -- "$1")
+EXT="${ORIGINAL_FILE_NAME##*.}"
+FILE_NAME="${ORIGINAL_FILE_NAME%.*}"
+
+if [ ! "$EXT" == "coffee" ]; then
+  echo "Look like this is not a coffeescript file"
+  exit 1
+fi
+
+ES6_FILE_NAME="${FILE_NAME}.js"
+ES6_FILE_NAME_FULL_PATH="$(pwd)/${FILE_NAME}.js"
+
+decaffeinate --loose-includes --loose-default-params --loose-for-expressions --loose-for-of --use-js-modules "${FILE_NAME}.${EXT}"
+sed -i '' 's/DOM\.//g' $ES6_FILE_NAME
+
+cd "$(dirname "$0")"
+
+jscodeshift -t ../src/dom-factories-calls-to-calls-with-react-dom-prefix.js $ES6_FILE_NAME_FULL_PATH
+jscodeshift -t ../react-codemod/transforms/React-DOM-to-react-dom-factories.js $ES6_FILE_NAME_FULL_PATH
+jscodeshift -t ../react-codemod/transforms/create-element-to-jsx.js $ES6_FILE_NAME_FULL_PATH
